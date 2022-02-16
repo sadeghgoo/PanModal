@@ -124,5 +124,10 @@ public extension PanModalPresentable where Self: UIViewController {
     func panModalDidDismiss() {
 
     }
+  
+    func addCustomViewToContainerView(containerView: UIView) -> UIView? {
+      return nil
+    }
+
 }
 #endif

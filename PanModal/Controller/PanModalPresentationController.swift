@@ -346,7 +346,11 @@ private extension PanModalPresentationController {
          */
         containerView.addSubview(presentedView)
         containerView.addGestureRecognizer(panGestureRecognizer)
-
+      
+        if let customView = presentable.addCustomViewToContainerView(containerView: containerView) {
+         addCustomViewToContainerView(customView: customView)
+        }
+      
         if presentable.showDragIndicator {
             addDragIndicatorView(to: presentedView)
         }
@@ -415,6 +419,10 @@ private extension PanModalPresentationController {
         dragIndicatorView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         dragIndicatorView.widthAnchor.constraint(equalToConstant: Constants.dragIndicatorSize.width).isActive = true
         dragIndicatorView.heightAnchor.constraint(equalToConstant: Constants.dragIndicatorSize.height).isActive = true
+    }
+  
+    func addCustomViewToContainerView(customView: UIView) {
+      containerView?.addSubview(customView)
     }
 
     /**
