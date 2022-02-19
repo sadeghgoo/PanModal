@@ -138,6 +138,8 @@ open class PanModalPresentationController: UIPresentationController {
         view.layer.cornerRadius = Constants.dragIndicatorSize.height / 2.0
         return view
     }()
+  
+    private var customView: UIView?
 
     /**
      Override presented view to return the pan container wrapper
@@ -183,11 +185,13 @@ open class PanModalPresentationController: UIPresentationController {
 
         guard let coordinator = presentedViewController.transitionCoordinator else {
             backgroundView.dimState = .max
+            customView?.alpha = 1
             return
         }
 
         coordinator.animate(alongsideTransition: { [weak self] _ in
             self?.backgroundView.dimState = .max
+            self?.customView?.alpha = 1
             self?.presentedViewController.setNeedsStatusBarAppearanceUpdate()
         })
     }
@@ -203,6 +207,7 @@ open class PanModalPresentationController: UIPresentationController {
 
         guard let coordinator = presentedViewController.transitionCoordinator else {
             backgroundView.dimState = .off
+            customView?.alpha = 0
             return
         }
 
@@ -213,6 +218,7 @@ open class PanModalPresentationController: UIPresentationController {
         coordinator.animate(alongsideTransition: { [weak self] _ in
             self?.dragIndicatorView.alpha = 0.0
             self?.backgroundView.dimState = .off
+            self?.customView?.alpha = 0
             self?.presentingViewController.setNeedsStatusBarAppearanceUpdate()
         })
     }
@@ -423,6 +429,7 @@ private extension PanModalPresentationController {
   
     func addCustomViewToContainerView(customView: UIView) {
       containerView?.addSubview(customView)
+      self.customView = customView
     }
 
     /**
@@ -664,6 +671,7 @@ private extension PanModalPresentationController {
         
         guard presentedView.frame.origin.y > shortFormYPosition else {
             backgroundView.dimState = .max
+            customView?.alpha = 1
             return
         }
 
@@ -673,7 +681,9 @@ private extension PanModalPresentationController {
          Once presentedView is translated below shortForm, calculate yPos relative to bottom of screen
          and apply percentage to backgroundView alpha
          */
-        backgroundView.dimState = .percent(1.0 - (yDisplacementFromShortForm / presentedView.frame.height))
+        let percentage = 1.0 - (yDisplacementFromShortForm / presentedView.frame.height)
+        backgroundView.dimState = .percent(percentage)
+        customView?.alpha = max(0.0, min(1.0, percentage ))
     }
 
     /**
